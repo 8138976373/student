@@ -9,8 +9,8 @@ $search = $_GET['search'] ?? '';
 if (!empty($search)) {
     $students = array_filter($students, function ($student) use ($search) {
         return stripos($student['name'], $search) !== false ||
-            stripos($student['student_id'], $search) !== false ||
-            stripos($student['email'], $search) !== false ||
+            stripos($student['id'], $search) !== false ||
+            stripos($student['phno'], $search) !== false ||
             stripos($student['class'], $search) !== false;
     });
 }
@@ -66,7 +66,7 @@ include '../../includes/header.php';
                                     <tr>
                                         <th>Student ID</th>
                                         <th>Name</th>
-                                        <th>Email</th>
+                                        <!-- <th>Email</th> -->
                                         <th>Class</th>
                                         <th>Phone</th>
                                         <th>Actions</th>
@@ -75,18 +75,18 @@ include '../../includes/header.php';
                                 <tbody>
                                     <?php foreach ($students as $student): ?>
                                         <tr>
-                                            <td><?php echo htmlspecialchars($student['student_id']); ?></td>
+                                            <td><?php echo htmlspecialchars($student['id']); ?></td>
                                             <td><?php echo htmlspecialchars($student['name']); ?></td>
-                                            <td><?php echo htmlspecialchars($student['email']); ?></td>
+                                            <!-- <td><?php echo htmlspecialchars($student['email']); ?></td> -->
                                             <td><?php echo htmlspecialchars($student['class']); ?></td>
-                                            <td><?php echo htmlspecialchars($student['phone'] ?? '—'); ?></td>
+                                            <td><?php echo htmlspecialchars($student['phno'] ?? '—'); ?></td>
                                             <td>
                                                 <div class="btn-group" role="group">
                                                     <a href="student_profile.php?id=<?php echo $student['id']; ?>"
                                                         class="btn btn-sm btn-outline-primary" title="View Profile">
                                                         <i class="fas fa-eye"></i> View
                                                     </a>
-                                                    <a href="add_marks.php?student_id=<?php echo $student['id']; ?>"
+                                                    <a href="add_marks.php?id=<?php echo $student['id']; ?>"
                                                         class="btn btn-sm btn-outline-success" title="Add Marks">
                                                         <i class="fas fa-plus"></i> Marks
                                                     </a>

@@ -71,7 +71,7 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
     $Username = $_POST['username'];
     $Password = $_POST['password'];
     /*........... query for login.............*/
-    $sql = "SELECT * FROM admin WHERE username = '$Username' and password = '$Password'";
+    $sql = "SELECT * FROM users WHERE username = '$Username' and password = '$Password'";
     $data = mysqli_query($db, $sql);   /*include two variable database($db) and query($sql) and finally store $data variable */
     $result = mysqli_num_rows($data);/*data are feech then check how many data are feetch*/
     if ($result == 1) {

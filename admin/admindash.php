@@ -37,7 +37,7 @@ include '../includes/header.php';
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
+        <!-- <div class="col-md-4">
             <div class="card bg-success text-white">
                 <div class="card-body">
                     <h5 class="card-title">Total Marks</h5>
@@ -52,7 +52,7 @@ include '../includes/header.php';
                     <h2 class="card-text"><?php echo $avgGrade; ?>%</h2>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 
     <!-- Quick Actions -->
@@ -68,7 +68,7 @@ include '../includes/header.php';
                 <div class="card-body text-center">
                     <h5 class="card-title">Add New Student</h5>
                     <p class="card-text">Register a new student in the system</p>
-                    <a href="student/student_profile.php" class="btn btn-primary">Add Student</a>
+                    <a href="/student/admin/student/add_student.php" class="btn btn-primary">Add Student</a>
                 </div>
             </div>
         </div>
@@ -106,14 +106,14 @@ include '../includes/header.php';
                             foreach ($recentStudents as $student):
                             ?>
                                 <tr>
-                                    <td><?php echo htmlspecialchars($student['student_id']); ?></td>
+                                    <td><?php echo htmlspecialchars($student['id']); ?></td>
                                     <td><?php echo htmlspecialchars($student['name']); ?></td>
-                                    <td><?php echo htmlspecialchars($student['email']); ?></td>
+                                    <td><?php echo htmlspecialchars($student['phno']); ?></td>
                                     <td><?php echo htmlspecialchars($student['class']); ?></td>
                                     <td>
-                                        <a href="student_profile.php?id=<?php echo $student['id']; ?>"
+                                        <a href= "/student/admin/student/student_profile.php?id=<?php echo $student['id']; ?>"
                                             class="btn btn-sm btn-outline-primary">View</a>
-                                        <a href="add_marks.php?student_id=<?php echo $student['id']; ?>"
+                                        <a href="add_marks.php?id=<?php echo $student['id']; ?>"
                                             class="btn btn-sm btn-outline-success">Add Marks</a>
                                     </td>
                                 </tr>

@@ -60,17 +60,34 @@ function loadUsers()
 /**
  * Load students from JSON file
  */
+// function loadStudents()
+// {
+//     initializeData();
+//     $studentsFile = __DIR__ . '/../data/students.json';
+
+//     if (file_exists($studentsFile)) {
+//         $content = file_get_contents($studentsFile);
+//         return json_decode($content, true) ?: [];
+//     }
+
+//     return [];
+// }
+
 function loadStudents()
 {
-    initializeData();
-    $studentsFile = __DIR__ . '/../data/students.json';
+    include(__DIR__ . '/../dbconnect.php');
+    $students = [];
 
-    if (file_exists($studentsFile)) {
-        $content = file_get_contents($studentsFile);
-        return json_decode($content, true) ?: [];
+    $sql = "SELECT * FROM student"; // Or change to your student table
+    $result = mysqli_query($db, $sql);
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $students[] = $row;
+        }
     }
 
-    return [];
+    return $students;
 }
 
 /**

@@ -43,6 +43,7 @@
                             <i class="fas fa-user-plus me-1"></i>Add Student
                         </a>
                     </li>
+                    
                 </ul>
 
                 <ul class="navbar-nav">
@@ -52,14 +53,14 @@
                             <?php echo htmlspecialchars($_SESSION['username']); ?>
                         </a>
                         <ul class="dropdown-menu">
-                            <li>
+                            <!-- <li>
                                 <span class="dropdown-item-text">
                                     <small class="text-muted">Role: <?php echo htmlspecialchars($_SESSION['role']); ?></small>
                                 </span>
-                            </li>
-                            <li>
+                            </li> -->
+                            <!-- <li>
                                 <hr class="dropdown-divider">
-                            </li>
+                            </li> -->
                             <li>
                                 <a class="dropdown-item" href="../logout.php">
                                     <i class="fas fa-sign-out-alt me-1"></i>Logout

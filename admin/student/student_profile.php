@@ -20,7 +20,7 @@ if (!empty($studentId)) {
 
     // Get student's marks
     $studentMarks = array_filter($marks, function ($mark) use ($studentId) {
-        return $mark['student_id'] === $studentId;
+        return $mark['id'] === $studentId;
     });
 
     // Sort marks by date (newest first)
@@ -49,8 +49,8 @@ include '../../includes/header.php';
         <div class="col-12">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="../dashboard.php">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="view_students.php">Students</a></li>
+                    <li class="breadcrumb-item"><a href="/student/admin/admindash.php">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="view_student.php">Students</a></li>
                     <li class="breadcrumb-item active"><?php echo htmlspecialchars($student['name']); ?></li>
                 </ol>
             </nav>
@@ -67,29 +67,29 @@ include '../../includes/header.php';
                 <div class="card-body">
                     <dl class="row">
                         <dt class="col-sm-5">Student ID:</dt>
-                        <dd class="col-sm-7"><?php echo htmlspecialchars($student['student_id']); ?></dd>
+                        <dd class="col-sm-7"><?php echo htmlspecialchars($student['id']); ?></dd>
 
                         <dt class="col-sm-5">Name:</dt>
                         <dd class="col-sm-7"><?php echo htmlspecialchars($student['name']); ?></dd>
 
-                        <dt class="col-sm-5">Email:</dt>
-                        <dd class="col-sm-7"><?php echo htmlspecialchars($student['email']); ?></dd>
+                        <!-- <dt class="col-sm-5">Email:</dt>
+                        <dd class="col-sm-7"><?php echo htmlspecialchars($student['email']); ?></dd> -->
 
                         <dt class="col-sm-5">Class:</dt>
                         <dd class="col-sm-7"><?php echo htmlspecialchars($student['class']); ?></dd>
 
                         <dt class="col-sm-5">Phone:</dt>
-                        <dd class="col-sm-7"><?php echo htmlspecialchars($student['phone'] ?? '—'); ?></dd>
+                        <dd class="col-sm-7"><?php echo htmlspecialchars($student['phno'] ?? '—'); ?></dd>
 
                         <dt class="col-sm-5">Address:</dt>
                         <dd class="col-sm-7"><?php echo htmlspecialchars($student['address'] ?? '—'); ?></dd>
 
-                        <dt class="col-sm-5">Registered:</dt>
-                        <dd class="col-sm-7"><?php echo date('M j, Y', strtotime($student['created_at'])); ?></dd>
+                        <!-- <dt class="col-sm-5">Registered:</dt>
+                        <dd class="col-sm-7"><?php echo date('M j, Y', strtotime($student['created_at'])); ?></dd> -->
                     </dl>
 
                     <div class="d-grid">
-                        <a href="add_marks.php?student_id=<?php echo $student['id']; ?>"
+                        <a href="add_marks.php?id=<?php echo $student['id']; ?>"
                             class="btn btn-primary">Add New Marks</a>
                     </div>
                 </div>
@@ -120,14 +120,14 @@ include '../../includes/header.php';
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Marks History</h5>
-                    <a href="add_marks.php?student_id=<?php echo $student['id']; ?>"
+                    <a href="add_marks.php?id=<?php echo $student['id']; ?>"
                         class="btn btn-sm btn-primary">Add Marks</a>
                 </div>
                 <div class="card-body">
                     <?php if (empty($studentMarks)): ?>
                         <div class="text-center py-4">
                             <p class="text-muted">No marks recorded yet.</p>
-                            <a href="add_marks.php?student_id=<?php echo $student['id']; ?>"
+                            <a href="add_marks.php?id=<?php echo $student['id']; ?>"
                                 class="btn btn-primary">Add First Marks</a>
                         </div>
                     <?php else: ?>
