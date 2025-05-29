@@ -113,7 +113,7 @@ include '../includes/header.php';
                                     <td>
                                         <a href= "/student/admin/student/student_profile.php?id=<?php echo $student['id']; ?>"
                                             class="btn btn-sm btn-outline-primary">View</a>
-                                        <a href="add_marks.php?id=<?php echo $student['id']; ?>"
+                                        <a href="/student/admin/student/add_marks.php?id=<?php echo $student['id']; ?>"
                                             class="btn btn-sm btn-outline-success">Add Marks</a>
                                     </td>
                                 </tr>
@@ -129,34 +129,3 @@ include '../includes/header.php';
 <?php include '../includes/footer.php'; ?>
 
 
-
-<!--<!DOCTYPE html>-->
-<!--<html>-->
-<!--<head>-->
-<!--	<title>Student information system</title>-->
-<!--	<link rel="stylesheet" type="text/css" href="../css/style.css">-->
-
-<!--</head>-->
-<!--<body>-->
-<!--	<header>  -->
-<!--		<div class="main">-->
-<!--			<ul>-->
-<!--				<li class="active"><a href="#">Home</a></li>-->
-<!--				<li><a href="">Departments</a></li>-->
-<!--				<li><a href="../student/view_student.php">Student</a></li>-->
-<!--				<li><a href="#">Contact</a></li>-->
-<!--				<li><a href="#">About</a></li>-->
-<!--			</ul>-->
-<!--		</div>-->
-<!--		<div class="title">-->
-<!--			<h1>Student Information System</h1>-->
-<!--		</div>-->
-<!--<div class="button">-->
-<!--	<a href="page.php" class="btn">Student login</a>-->
-<!--	<a href="login.php" class="btn">Admin login</a>-->
-
-<!--</div>-->
-<!--	</header>-->
-
-<!--</body>-->
-<!--</html>-->

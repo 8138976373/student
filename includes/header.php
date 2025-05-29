@@ -39,7 +39,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) === 'add_student.php' ? 'active' : ''; ?>"
-                            href="add_student.php">
+                            href="/student/admin/student/add_student.php">
                             <i class="fas fa-user-plus me-1"></i>Add Student
                         </a>
                     </li>
