@@ -1,94 +1,174 @@
-<!-- <?php
-		session_start();
-		if (isset($_SESSION['username'])) /*for security purpose without username and password deny access to dashboard*/ {
-			echo "";
-		} else {
-			header('location:../login.php');
-		}
-		echo " welcome " . $_SESSION['username']
-		?> -->
 <?php
+require_once '../../includes/auth.php';
+require_once '../../includes/functions.php';
+
+$studentId = $_GET['id'] ?? '';
+$student = null;
+$studentMarks = [];
+
+if (!empty($studentId)) {
+    $students = loadStudents();
+    $marks = loadMarks();
+
+    // Find the student
+    foreach ($students as $s) {
+        if ($s['admission_no'] === $studentId) {
+            $student = $s;
+            break;
+        }
+    }
+
+    // Get student's marks
+    $studentMarks = array_filter($marks, function ($mark) use ($studentId) {
+        return $mark['id'] === $studentId;
+    });
+
+    // Sort marks by date (newest first)
+    usort($studentMarks, function ($a, $b) {
+        return strtotime($b['created_at']) - strtotime($a['created_at']);
+    });
+}
+
+// if (!$student) {
+//     header('Location: view_students.php');
+//     exit();
+// }
+
+// Calculate average grade
+$avgGrade = 0;
+if (!empty($studentMarks)) {
+    $totalGrades = array_sum(array_column($studentMarks, 'grade'));
+    $avgGrade = round($totalGrades / count($studentMarks), 2);
+}
 
 include '../../includes/header.php';
 ?>
-<!--include('../message/session.php');-->
-<!--include('titleheader.php');-->
-<link rel="stylesheet" href="/student/assets/style.css">
 
-<div class="d-flex justify-content-center align-items-center" style="min-height: 100vh;">
-	<div class="card shadow-lg p-4" style="max-width: 400px; width: 100%;">
-		<h3 class="text-center mb-4">Add Student</h3>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/student/admin/admindash.php">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="view_student.php">Students</a></li>
+                    <li class="breadcrumb-item active"><?php echo htmlspecialchars($student['name']); ?></li>
+                </ol>
+            </nav>
+        </div>
+    </div>
 
-		<!-- Login Form -->
-		<form method="POST" action="" enctype="multipart/form-data">
-			<div class="mb-3">
-				<label for="name" class="form-label">Full Name</label>
-				<input type="text" name="name" id="name" class="form-control" placeholder="Enter Full Name" required>
-			</div>
-			<div class="mb-3">
-				<label for="class" class="form-label">Class</label>
-				<input type="text" name="class" id="class" class="form-control" placeholder="Enter Class" required>
-			</div>
-			<div class="mb-3">
-				<label for="rollno" class="form-label">Admission No</label>
-				<input type="text" name="rollno" id="rollno" class="form-control" placeholder="Enter Admission No" required>
-			</div>
-			<div class="mb-3">
-				<label for="phno" class="form-label">Contact</label>
-				<input type="text" name="phno" id="phno" class="form-control" placeholder="Enter Phone Number" required>
-			</div>
-			<div class="mb-3">
-				<label for="image" class="form-label">Profile Image</label>
-				<input type="file" name="image" id="image" class="form-control" placeholder="Select Profile Image" required>
+    <div class="row">
+        <!-- Student Information -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Student Information</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-5">Admission No:</dt>
+                        <dd class="col-sm-7"><?php echo htmlspecialchars($student['admission_no']); ?></dd>
 
-			</div>
-			<button type="submit" name="submit" class="btn btn-primary w-100">Submit</button>
-		</form>
+                        <dt class="col-sm-5">Name:</dt>
+                        <dd class="col-sm-7"><?php echo htmlspecialchars($student['name']); ?></dd>
 
-		<!--<div class="mt-3 text-center">-->
-		<!--    <a href="index.php" class="btn btn-link">Back</a>-->
-		<!--    <a href="login_n.php" class="btn btn-link">Admin Login</a>-->
-		<!--</div>-->
-	</div>
+                        <!-- <dt class="col-sm-5">Email:</dt>
+                        <dd class="col-sm-7"><?php echo htmlspecialchars($student['Phone']); ?></dd> -->
+
+                        <dt class="col-sm-5">Department:</dt>
+                        <dd class="col-sm-7"><?php echo htmlspecialchars($student['department']); ?></dd>
+
+						 <dt class="col-sm-5">Semester:</dt>
+                        <dd class="col-sm-7"><?php echo htmlspecialchars($student['semester']); ?></dd>
+
+                        <dt class="col-sm-5">Phone:</dt>
+                        <dd class="col-sm-7"><?php echo htmlspecialchars($student['phno'] ?? '—'); ?></dd>
+
+                        <!-- <dt class="col-sm-5">Address:</dt>
+                        <dd class="col-sm-7"><?php echo htmlspecialchars($student['address'] ?? '—'); ?></dd> -->
+
+                        <!-- <dt class="col-sm-5">Registered:</dt>
+                        <dd class="col-sm-7"><?php echo date('M j, Y', strtotime($student['created_at'])); ?></dd> -->
+                    </dl>
+
+                    <div class="d-grid">
+                        <a href="add_marks.php?id=<?php echo $student['id']; ?>"
+                            class="btn btn-primary">Add New Marks</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5 class="mb-0">Statistics</h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="row">
+                        <div class="col-6">
+                            <h4 class="text-primary"><?php echo count($studentMarks); ?></h4>
+                            <small class="text-muted">Total Marks</small>
+                        </div>
+                        <div class="col-6">
+                            <h4 class="text-success"><?php echo $avgGrade; ?>%</h4>
+                            <small class="text-muted">Average Grade</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Marks History -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Marks History</h5>
+                    <a href="add_marks.php?id=<?php echo $student['id']; ?>"
+                        class="btn btn-sm btn-primary">Add Marks</a>
+                </div>
+                <div class="card-body">
+                    <?php if (empty($studentMarks)): ?>
+                        <div class="text-center py-4">
+                            <p class="text-muted">No marks recorded yet.</p>
+                            <a href="add_marks.php?id=<?php echo $student['id']; ?>"
+                                class="btn btn-primary">Add First Marks</a>
+                        </div>
+                    <?php else: ?>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Subject</th>
+                                        <th>Exam Type</th>
+                                        <th>Grade</th>
+                                        <th>Max Marks</th>
+                                        <th>Percentage</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($studentMarks as $mark): ?>
+                                        <tr>
+                                            <td><?php echo htmlspecialchars($mark['subject']); ?></td>
+                                            <td><?php echo htmlspecialchars($mark['exam_type']); ?></td>
+                                            <td>
+                                                <span class="badge bg-<?php echo getGradeBadgeClass($mark['grade'], $mark['max_marks']); ?>">
+                                                    <?php echo $mark['grade']; ?>/<?php echo $mark['max_marks']; ?>
+                                                </span>
+                                            </td>
+                                            <td><?php echo $mark['max_marks']; ?></td>
+                                            <td><?php echo round(($mark['grade'] / $mark['max_marks']) * 100, 1); ?>%</td>
+                                            <td><?php echo date('M j, Y', strtotime($mark['created_at'])); ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<?php
-if (isset($_POST['submit'])) {
-	include('../../dbconnect.php');
-
-	$ROLLNO = $_POST['rollno'];
-	$NAME = $_POST['name'];
-	$PHNO = $_POST['phno'];
-	$CLASS = $_POST['class'];
-	$RAW_IMAGE = $_FILES['image']['name'];
-	$SANITIZED_IMAGE = time() . '_' . preg_replace('/[^A-Za-z0-9.\-_]/', '_', $RAW_IMAGE);
-	$tempname = $_FILES['image']['tmp_name'];
-	$folder = "../../dataimg/" . $SANITIZED_IMAGE;
-
-	if (!is_dir("../../dataimg")) {
-		mkdir("../../dataimg", 0777, true);
-	}
-
-	if ($_FILES['image']['error'] !== UPLOAD_ERR_OK) {
-		echo "<script>alert('Upload error: " . $_FILES['image']['error'] . "');</script>";
-	}
-
-	if (move_uploaded_file($tempname, $folder)) {
-		$qry = "INSERT INTO `student` (`admission_no`, `name`, `phno`, `class`, `image`) 
-		        VALUES ('$ROLLNO', '$NAME', '$PHNO', '$CLASS', '$SANITIZED_IMAGE')";
-		
-		$run = mysqli_query($db, $qry);
-
-		if ($run === true) {
-			echo "<script>alert('Data inserted successfully');</script>";
-		} else {
-			echo "<script>alert('Database insert failed');</script>";
-		}
-	} else {
-		echo "<script>alert('Image upload failed');</script>";
-	}
-}
-
-
-?>
-	
+<?php include '../../includes/footer.php'; ?>

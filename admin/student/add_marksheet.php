@@ -17,35 +17,43 @@ include '../../includes/header.php';
 
 <div class="d-flex justify-content-center align-items-center" style="min-height: 100vh;">
 	<div class="card shadow-lg p-4" style="max-width: 400px; width: 100%;">
-		<h3 class="text-center mb-4">Add Student</h3>
+		<h3 class="text-center mb-4">Add Marksheet</h3>
 
 		<!-- Login Form -->
-		<form method="POST" action="" enctype="multipart/form-data">
+		<form method="POST" action="">
 			<div class="mb-3">
-				<label for="name" class="form-label">Full Name</label>
-				<input type="text" name="name" id="name" class="form-control" placeholder="Enter Full Name" required>
+				<label for="name" class="form-label">Exam Name</label>
+				<input type="text" name="name" id="name" class="form-control" placeholder="Enter Exam Name" required>
 			</div>
 			<div class="mb-3">
-				<label for="class" class="form-label">Department</label>
-				<input type="text" name="department" id="department" class="form-control" placeholder="Enter Department" required>
+				<label for="english" class="form-label">English</label>
+				<input type="number" name="english" id="english" class="form-control" placeholder="Enter Mark" required>
 			</div>
 			<div class="mb-3">
-				<label for="class" class="form-label">Semester</label>
-				<input type="text" name="semester" id="semester" class="form-control" placeholder="Enter Semester" required>
+				<label for="seclanguage" class="form-label">II Launguage</label>
+				<input type="number" name="seclanguage" id="seclanguage" class="form-control" placeholder="Enter Mark" required>
 			</div>
 			<div class="mb-3">
-				<label for="rollno" class="form-label">Admission No</label>
-				<input type="number" name="rollno" id="rollno" class="form-control" placeholder="Enter Admission No" required>
+				<label for="maths" class="form-label">Maths</label>
+				<input type="number" name="maths" id="maths" class="form-control"  placeholder="Enter Mark" required>
 			</div>
 			<div class="mb-3">
-				<label for="phno" class="form-label">Contact</label>
-				<input type="number" name="phno" id="phno" class="form-control" pattern="\d{10}"  placeholder="Enter Phone Number" required>
+				<label for="php" class="form-label">PHP</label>
+				<input type="number" name="php" id="php" class="form-control"  placeholder="Enter Mark" required>
 			</div>
 			<div class="mb-3">
-				<label for="image" class="form-label">Profile Image</label>
+				<label for="java" class="form-label">Java</label>
+				<input type="number" name="java" id="java" class="form-control"  placeholder="Enter Mark" required>
+			</div>
+			<div class="mb-3">
+				<label for="dbms" class="form-label">DBMS</label>
+				<input type="number" name="dbms" id="dbms" class="form-control"  placeholder="Enter Mark" required>
+			</div>
+			<!-- <div class="mb-3">
+				<label for="image" class="form-label">PHP</label>
 				<input type="file" name="image" id="image" class="form-control" placeholder="Select Profile Image" required>
 
-			</div>
+			</div> -->
 			<button type="submit" name="submit" class="btn btn-primary w-100">Submit</button>
 		</form>
 
@@ -63,8 +71,7 @@ if (isset($_POST['submit'])) {
 	$ROLLNO = $_POST['rollno'];
 	$NAME = $_POST['name'];
 	$PHNO = $_POST['phno'];
-	$DEPARTMENT = $_POST['department'];
-	$SEMESTER = $_POST['semester'];
+	$CLASS = $_POST['class'];
 	$RAW_IMAGE = $_FILES['image']['name'];
 	$SANITIZED_IMAGE = time() . '_' . preg_replace('/[^A-Za-z0-9.\-_]/', '_', $RAW_IMAGE);
 	$tempname = $_FILES['image']['tmp_name'];
@@ -79,8 +86,8 @@ if (isset($_POST['submit'])) {
 	}
 
 	if (move_uploaded_file($tempname, $folder)) {
-		$qry = "INSERT INTO `student` (`admission_no`, `name`, `phno`, `department`,`semester`, `image`) 
-		        VALUES ('$ROLLNO', '$NAME', '$PHNO', '$DEPARTMENT', '$SEMESTER','$SANITIZED_IMAGE')";
+		$qry = "INSERT INTO `marks` (`admission_no`, `name`, `phno`, `class`, `image`) 
+		        VALUES ('$ROLLNO', '$NAME', '$PHNO', '$CLASS', '$SANITIZED_IMAGE')";
 		
 		$run = mysqli_query($db, $qry);
 

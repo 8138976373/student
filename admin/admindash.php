@@ -95,8 +95,9 @@ include '../includes/header.php';
                             <tr>
                                 <th>Student ID</th>
                                 <th>Name</th>
-                                <th>Email</th>
-                                <th>Class</th>
+                                <th>Phone</th>
+                                <th>Department</th>
+                                 <th>Semester</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -106,14 +107,15 @@ include '../includes/header.php';
                             foreach ($recentStudents as $student):
                             ?>
                                 <tr>
-                                    <td><?php echo htmlspecialchars($student['id']); ?></td>
+                                    <td><?php echo htmlspecialchars($student['admission_no']); ?></td>
                                     <td><?php echo htmlspecialchars($student['name']); ?></td>
                                     <td><?php echo htmlspecialchars($student['phno']); ?></td>
-                                    <td><?php echo htmlspecialchars($student['class']); ?></td>
+                                    <td><?php echo htmlspecialchars($student['department']); ?></td>
+                                    <td><?php echo htmlspecialchars($student['semester']); ?></td>
                                     <td>
-                                        <a href= "/student/admin/student/student_profile.php?id=<?php echo $student['id']; ?>"
+                                        <a href= "/student/admin/student/student_profile.php?id=<?php echo $student['admission_no']; ?>"
                                             class="btn btn-sm btn-outline-primary">View</a>
-                                        <a href="/student/admin/student/add_marks.php?id=<?php echo $student['id']; ?>"
+                                        <a href="/student/admin/student/add_marks.php?id=<?php echo $student['admission_no']; ?>"
                                             class="btn btn-sm btn-outline-success">Add Marks</a>
                                     </td>
                                 </tr>
