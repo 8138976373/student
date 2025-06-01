@@ -1,99 +1,142 @@
-<!-- <?php
-		session_start();
-		if (isset($_SESSION['username'])) /*for security purpose without username and password deny access to dashboard*/ {
-			echo "";
-		} else {
-			header('location:../login.php');
-		}
-		echo " welcome " . $_SESSION['username']
-		?> -->
 <?php
+// File: student/admin/student/add_student.php
 
-include '../../includes/header.php';
-?>
-<!--include('../message/session.php');-->
-<!--include('titleheader.php');-->
-<link rel="stylesheet" href="/student/assets/style.css">
+require_once '../../includes/auth.php';     
+require_once '../../includes/functions.php'; // For any shared functions (though not directly used in this specific submission logic)
+include '../../dbconnect.php';            
+// if (!isLoggedIn() || !isAdmin()) { // Assuming isLoggedIn() and isAdmin() are defined in auth.php
+//     header('Location: ../../auth/login.php'); // Redirect to login page
+//     exit('Access Denied: You do not have permission to add students.');
+// }
 
-<div class="d-flex justify-content-center align-items-center" style="min-height: 100vh;">
-	<div class="card shadow-lg p-4" style="max-width: 400px; width: 100%;">
-		<h3 class="text-center mb-4">Add Student</h3>
+$message = '';
+$messageType = ''; 
 
-		<!-- Login Form -->
-		<form method="POST" action="" enctype="multipart/form-data">
-			<div class="mb-3">
-				<label for="name" class="form-label">Full Name</label>
-				<input type="text" name="name" id="name" class="form-control" placeholder="Enter Full Name" required>
-			</div>
-			<div class="mb-3">
-				<label for="class" class="form-label">Department</label>
-				<input type="text" name="department" id="department" class="form-control" placeholder="Enter Department" required>
-			</div>
-			<div class="mb-3">
-				<label for="class" class="form-label">Semester</label>
-				<input type="text" name="semester" id="semester" class="form-control" placeholder="Enter Semester" required>
-			</div>
-			<div class="mb-3">
-				<label for="rollno" class="form-label">Admission No</label>
-				<input type="number" name="rollno" id="rollno" class="form-control" placeholder="Enter Admission No" required>
-			</div>
-			<div class="mb-3">
-				<label for="phno" class="form-label">Contact</label>
-				<input type="number" name="phno" id="phno" class="form-control" pattern="\d{10}"  placeholder="Enter Phone Number" required>
-			</div>
-			<div class="mb-3">
-				<label for="image" class="form-label">Profile Image</label>
-				<input type="file" name="image" id="image" class="form-control" placeholder="Select Profile Image" required>
-
-			</div>
-			<button type="submit" name="submit" class="btn btn-primary w-100">Submit</button>
-		</form>
-
-		<!--<div class="mt-3 text-center">-->
-		<!--    <a href="index.php" class="btn btn-link">Back</a>-->
-		<!--    <a href="login_n.php" class="btn btn-link">Admin Login</a>-->
-		<!--</div>-->
-	</div>
-</div>
-
-<?php
 if (isset($_POST['submit'])) {
-	include('../../dbconnect.php');
+    // Get data from the form
+    $ROLLNO = $_POST['rollno'];
+    $NAME = $_POST['name'];
+    $PHNO = $_POST['phno'];
+    $DEPARTMENT = $_POST['department'];
+    $SEMESTER = $_POST['semester'];
 
-	$ROLLNO = $_POST['rollno'];
-	$NAME = $_POST['name'];
-	$PHNO = $_POST['phno'];
-	$DEPARTMENT = $_POST['department'];
-	$SEMESTER = $_POST['semester'];
-	$RAW_IMAGE = $_FILES['image']['name'];
-	$SANITIZED_IMAGE = time() . '_' . preg_replace('/[^A-Za-z0-9.\-_]/', '_', $RAW_IMAGE);
-	$tempname = $_FILES['image']['tmp_name'];
-	$folder = "../../dataimg/" . $SANITIZED_IMAGE;
+    $imagePath = '';
 
-	if (!is_dir("../../dataimg")) {
-		mkdir("../../dataimg", 0777, true);
-	}
+    if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+        $RAW_IMAGE = $_FILES['image']['name'];
+        $SANITIZED_IMAGE = time() . '_' . preg_replace('/[^A-Za-z0-9.\-_]/', '_', $RAW_IMAGE);
+        $tempname = $_FILES['image']['tmp_name'];
+        $folder = "../../dataimg/" . $SANITIZED_IMAGE; // Adjust path to your image storage directory
 
-	if ($_FILES['image']['error'] !== UPLOAD_ERR_OK) {
-		echo "<script>alert('Upload error: " . $_FILES['image']['error'] . "');</script>";
-	}
+        // Create directory if it doesn't exist
+        if (!is_dir("../../dataimg")) {
+            mkdir("../../dataimg", 0777, true);
+        }
 
-	if (move_uploaded_file($tempname, $folder)) {
-		$qry = "INSERT INTO `student` (`admission_no`, `name`, `phno`, `department`,`semester`, `image`) 
-		        VALUES ('$ROLLNO', '$NAME', '$PHNO', '$DEPARTMENT', '$SEMESTER','$SANITIZED_IMAGE')";
-		
-		$run = mysqli_query($db, $qry);
+        if (move_uploaded_file($tempname, $folder)) {
+            $imagePath = $SANITIZED_IMAGE; 
+        } else {
+            $message = "Image upload failed. Error code: " . $_FILES['image']['error'];
+            $messageType = "danger";
+        }
+    } else if (isset($_FILES['image']) && $_FILES['image']['error'] !== UPLOAD_ERR_NO_FILE) {
+        $message = "Image upload failed. Error code: " . $_FILES['image']['error'];
+        $messageType = "danger";
+    }
 
-		if ($run === true) {
-			echo "<script>alert('Data inserted successfully');</script>";
-		} else {
-			echo "<script>alert('Database insert failed');</script>";
-		}
-	} else {
-		echo "<script>alert('Image upload failed');</script>";
-	}
+    if ($messageType !== "danger") {
+        $sql = "INSERT INTO `student` (`admission_no`, `name`, `phno`, `department`, `semester`, `image`)
+                VALUES (?, ?, ?, ?, ?, ?)";
+
+        $stmt = mysqli_prepare($db, $sql);
+
+        if ($stmt === false) {
+            $message = "Database error: Failed to prepare statement for student insertion.";
+            $messageType = "danger";
+            error_log("Failed to prepare statement (add_student.php insert): " . mysqli_error($db));
+        } else {
+            // Bind parameters: 'ssssss' -> 6 strings (or 'isssss' if admission_no is INT)
+            mysqli_stmt_bind_param($stmt, 'ssssss', $ROLLNO, $NAME, $PHNO, $DEPARTMENT, $SEMESTER, $imagePath);
+            $run = mysqli_stmt_execute($stmt);
+
+            if ($run === true) {
+                $message = "Student data added successfully!";
+                $messageType = "success";
+            } else {
+                // Check for duplicate entry error specifically (e.g., for unique admission_no)
+                if (mysqli_errno($db) == 1062) { // 1062 is typically the error code for duplicate entry
+                    $message = "Failed to add student: Admission Number '" . htmlspecialchars($ROLLNO) . "' already exists.";
+                } else {
+                    $message = "Database insert failed: " . mysqli_error($db);
+                }
+                $messageType = "danger";
+                error_log("Student insertion failed for ID: $ROLLNO. Error: " . mysqli_error($db));
+            }
+            mysqli_stmt_close($stmt);
+        }
+    }
 }
 
-
+include '../../includes/header.php'; 
 ?>
-	
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/student/admin/admindash.php">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="/student/admin/student/view_student.php">Students</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Add Student</li>
+                </ol>
+            </nav>
+
+            <?php if (!empty($message)): ?>
+                <div class="alert alert-<?php echo $messageType; ?> alert-dismissible fade show" role="alert">
+                    <?php echo htmlspecialchars($message); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php endif; ?>
+
+            <div class="card shadow-lg p-4 mb-4">
+                <h3 class="text-center mb-4">Add New Student</h3>
+
+                <form method="POST" action="" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Full Name</label>
+                        <input type="text" name="name" id="name" class="form-control" placeholder="Enter Full Name" required
+                            value="<?php echo htmlspecialchars($_POST['name'] ?? ''); ?>">
+                    </div>
+                    <div class="mb-3">
+                        <label for="department" class="form-label">Department</label>
+                        <input type="text" name="department" id="department" class="form-control" placeholder="Enter Department" required
+                            value="<?php echo htmlspecialchars($_POST['department'] ?? ''); ?>">
+                    </div>
+                    <div class="mb-3">
+                        <label for="semester" class="form-label">Semester</label>
+                        <input type="text" name="semester" id="semester" class="form-control" placeholder="Enter Semester" required
+                            value="<?php echo htmlspecialchars($_POST['semester'] ?? ''); ?>">
+                    </div>
+                    <div class="mb-3">
+                        <label for="rollno" class="form-label">Admission No</label>
+                        <input type="number" name="rollno" id="rollno" class="form-control" placeholder="Enter Admission No" required
+                            value="<?php echo htmlspecialchars($_POST['rollno'] ?? ''); ?>">
+                    </div>
+                    <div class="mb-3">
+                        <label for="phno" class="form-label">Contact</label>
+                        <input type="number" name="phno" id="phno" class="form-control" pattern="\d{10}" placeholder="Enter Phone Number" required
+                            value="<?php echo htmlspecialchars($_POST['phno'] ?? ''); ?>">
+                    </div>
+                    <div class="mb-3">
+                        <label for="image" class="form-label">Profile Image</label>
+                        <input type="file" name="image" id="image" class="form-control" required>
+                        <small class="form-text text-muted">Please select a profile image for the student.</small>
+                    </div>
+                    <button type="submit" name="submit" class="btn btn-primary w-100">Add Student</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php include '../../includes/footer.php'; ?>
