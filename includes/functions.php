@@ -89,7 +89,17 @@ function loadStudents()
 
     return $students;
 }
+function deleteStudent($id){
+ include(__DIR__ . '/../dbconnect.php');
 
+	$sql = "DELETE FROM student WHERE admission_no='$id'";
+	$result = mysqli_query($db, $sql);   /*include two variable database($db) and query($sql) and finally store $data variable */
+	if ($result == 1) {
+		echo "Data delete Successfully";
+	} else {
+		echo "error";
+	}
+}
 /**
  * Save students to JSON file
  */
