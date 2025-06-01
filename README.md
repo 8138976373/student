@@ -5,5 +5,6 @@ STUDENT project contains dashboard screen with count of total student and link f
 <img src="https://github.com/8138976373/student/raw/main/images/student_dashboard.png" alt="Dashboard" width="700" style="border: 1px solid black;" />
 <img src="https://github.com/8138976373/student/raw/main/images/students.png" alt="Dashboard" width="700" style="border: 1px solid black;" />
 <img src="https://github.com/8138976373/student/raw/main/images/student_info.png" alt="Dashboard" width="700" style="border: 1px solid black;" />
+<img src="https://github.com/8138976373/student/raw/main/images/mark_info.png" alt="Dashboard" width="700" style="border: 1px solid black;" />
 <img src="https://github.com/8138976373/student/raw/main/images/add_student.png" alt="Dashboard" width="700" style="border: 1px solid black;" />
 <img src="https://github.com/8138976373/student/raw/main/images/login.png" alt="Dashboard" width="700" style="border: 1px solid black;" />
