@@ -82,16 +82,25 @@ include '../../includes/header.php';
                                             <td><?php echo htmlspecialchars($student['semester']); ?></td>
                                             <td><?php echo htmlspecialchars($student['phno'] ?? '—'); ?></td>
                                             <td>
-                                                <div class="btn-group" role="group">
-                                                    <a href="student_profile.php?id=<?php echo $student['admission_no']; ?>"
-                                                        class="btn btn-sm btn-outline-primary" title="View Profile">
-                                                        <i class="fas fa-eye"></i> View
-                                                    </a>
-                                                    <a href="add_marks.php?id=<?php echo $student['admission_no']; ?>"
-                                                        class="btn btn-sm btn-outline-success" title="Add Marks">
-                                                        <i class="fas fa-plus"></i> Marks
-                                                    </a>
-                                                </div>
+                                                <div class="btn-group" role="group" aria-label="Student Actions">
+    <a href="student_profile.php?id=<?php echo $student['admission_no']; ?>"
+        class="btn btn-sm btn-outline-primary" title="View Profile">
+        <i class="fas fa-eye"></i>
+    </a>
+
+    <a href="edit_student.php?id=<?php echo $student['admission_no']; ?>"
+        class="btn btn-sm btn-outline-info" title="Edit Student">
+        <i class="fas fa-edit"></i>
+    </a>
+
+    <a href="delete_student.php?id=<?php echo $student['admission_no']; ?>"
+        class="btn btn-sm btn-outline-danger" title="Delete Student"
+        onclick="return confirm('Are you sure you want to delete this student record?');">
+        <i class="fas fa-trash"></i>
+    </a>
+
+    
+</div>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>

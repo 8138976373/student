@@ -102,17 +102,45 @@ function saveStudents($students)
 /**
  * Load marks from JSON file
  */
-function loadMarks()
+function loadMarks($id)
 {
-    initializeData();
-    $marksFile = __DIR__ . '/../data/marks.json';
+ include(__DIR__ . '/../dbconnect.php');
+    $mark = [];
 
-    if (file_exists($marksFile)) {
-        $content = file_get_contents($marksFile);
-        return json_decode($content, true) ?: [];
+    $sql = "SELECT * FROM `mark` WHERE admission_no =$id"; 
+    $result = mysqli_query($db, $sql);
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+             $total = $row['english'] + $row['sec_language']+$row['maths'] + $row['php']+$row['dbms'] + $row['java'];
+        $percentage = round(($total / 600) * 100,2);
+
+        // Assign grade based on percentage
+        if ($percentage >= 90) {
+            $grade = 'A+';
+        } elseif ($percentage >= 80) {
+            $grade = 'A';
+        } elseif ($percentage >= 70) {
+            $grade = 'B';
+        } elseif ($percentage >= 60) {
+            $grade = 'C';
+        } elseif ($percentage >= 50) {
+            $grade = 'D';
+        } elseif ($percentage >= 35) {
+            $grade = 'E';
+        } else {
+            $grade = 'F';
+        }
+
+        // Optionally include in the result
+        $row['total'] = $total;
+        $row['percentage'] = $percentage;
+        $row['grade'] = $grade;
+            $mark[] = $row;
+
+        }
     }
-
-    return [];
+    return $mark;
 }
 
 /**

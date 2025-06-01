@@ -67,27 +67,22 @@ include '../../includes/header.php';
 <?php
 if (isset($_POST['submit'])) {
 	include('../../dbconnect.php');
+	$ROLLNO = $_GET['id'] ?? '';
 
-	$ROLLNO = $_POST['rollno'];
+// $ROLLNO = $_GET['admission_no'] ?? '';
+
 	$NAME = $_POST['name'];
-	$PHNO = $_POST['phno'];
-	$CLASS = $_POST['class'];
-	$RAW_IMAGE = $_FILES['image']['name'];
-	$SANITIZED_IMAGE = time() . '_' . preg_replace('/[^A-Za-z0-9.\-_]/', '_', $RAW_IMAGE);
-	$tempname = $_FILES['image']['tmp_name'];
-	$folder = "../../dataimg/" . $SANITIZED_IMAGE;
+	$ENGLISH = $_POST['english'];
+	$SECLANGUAGE = $_POST['seclanguage'];
+	$MATHS = $_POST['maths'];
+	$PHP = $_POST['php'];
+	$JAVA = $_POST['java'];
+	$DBMS = $_POST['dbms'];
+	
 
-	if (!is_dir("../../dataimg")) {
-		mkdir("../../dataimg", 0777, true);
-	}
-
-	if ($_FILES['image']['error'] !== UPLOAD_ERR_OK) {
-		echo "<script>alert('Upload error: " . $_FILES['image']['error'] . "');</script>";
-	}
-
-	if (move_uploaded_file($tempname, $folder)) {
-		$qry = "INSERT INTO `marks` (`admission_no`, `name`, `phno`, `class`, `image`) 
-		        VALUES ('$ROLLNO', '$NAME', '$PHNO', '$CLASS', '$SANITIZED_IMAGE')";
+	
+		$qry = "INSERT INTO `mark` (`admission_no`, `exam_name`, `english`, `sec_language`, `maths` , `php` ,`java` , `dbms`) 
+		        VALUES ('$ROLLNO', '$NAME', '$ENGLISH', '$SECLANGUAGE', '$MATHS', '$PHP', '$JAVA', '$DBMS')";
 		
 		$run = mysqli_query($db, $qry);
 
@@ -96,9 +91,7 @@ if (isset($_POST['submit'])) {
 		} else {
 			echo "<script>alert('Database insert failed');</script>";
 		}
-	} else {
-		echo "<script>alert('Image upload failed');</script>";
-	}
+
 }
 
 

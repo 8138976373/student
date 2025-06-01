@@ -3,18 +3,18 @@ require_once '../includes/auth.php';
 require_once '../includes/functions.php';
 
 $students = loadStudents();
-$marks = loadMarks();
+// $marks = loadMarks();
 
 // Calculate statistics
 $totalStudents = count($students);
-$totalMarks = count($marks);
+// $totalMarks = count($marks);
 
 // Calculate average grade
-$avgGrade = 0;
-if ($totalMarks > 0) {
-    $totalGrades = array_sum(array_column($marks, 'grade'));
-    $avgGrade = round($totalGrades / $totalMarks, 2);
-}
+// $avgGrade = 0;
+// if ($totalMarks > 0) {
+//     $totalGrades = array_sum(array_column($marks, 'grade'));
+//     $avgGrade = round($totalGrades / $totalMarks, 2);
+// }
 
 include '../includes/header.php';
 ?>
